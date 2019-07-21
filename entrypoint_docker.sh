@@ -1,27 +1,16 @@
 #!/usr/bin/env bash
 
-postgres_host=db
-postgres_port=5432
-max_poll=30
+rm delete_example/migrations/0*  # leave __init__.py intact
 
-poll=0
-while : ; do
-    pg_isready -h $postgres_host -p $postgres_port
-    if [ $? -eq 0 ]
-    then
-        echo "Postgres came up, whoo hoo"
-        break
-    fi
-    echo "Postgres isn't up yet..."
+./poll_until_db_is_up.sh
 
-    poll=$((poll+1))
-    if [ $poll -gt $max_poll ]
-    then
-        echo "Postgres never came up!"
-        exit 1
-    fi
+./manage.py makemigrations
 
-    sleep 2
-done
+# Show the Postgres SQL that will be generated and applied
+./manage.py sqlmigrate delete_example 0001
 
 ./manage.py migrate
+
+chown -R 1001:1001 delete_example/migrations
+
+./manage.py shell_plus --notebook

@@ -18,7 +18,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEBUG = True
 
 INSTALLED_APPS = [
-    'delete_example'
+    'delete_example',
+    'django_extensions'
 ]
 
 DATABASES = {
@@ -30,6 +31,16 @@ DATABASES = {
         'PORT': 5432,
     }
 }
+
+NOTEBOOK_ARGUMENTS = [
+    # exposes IP and port
+    '--ip=0.0.0.0',
+    '--port=8888',
+    # disables the browser
+    '--no-browser',
+    '--allow-root',
+
+]
 
 LANGUAGE_CODE = 'en-us'
 
