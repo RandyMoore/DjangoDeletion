@@ -54,30 +54,39 @@ class ManyToOneChildProtect(ReportDeleteModel):
 # One to One
 class OneToOneParent(ReportDeleteModel):
     def print_relations(self):
-        print(f'{self.__class__.__name__} id: {self.id} has cascade children '
-              f'{[f"{child.__class__.__name__} {child.id}" for child in self.o_children_cascade.all()]}')
+        if hasattr(self, 'child_cascade'):
+            print(f'{self.__class__.__name__} id: {self.id} has cascade child '
+                  f'{self.child_cascade.__class__.__name__} {self.child_cascade.id}')
+        else:
+            print(f'{self.__class__.__name__} id: {self.id} has no cascade child')
 
-        print(f'{self.__class__.__name__} id: {self.id} has null children '
-              f'{[f"{child.__class__.__name__} {child.id}" for child in self.o_children_null.all()]}')
+        if hasattr(self, 'child_null'):
+            print(f'{self.__class__.__name__} id: {self.id} has null child '
+                  f'{self.child_null.__class__.__name__} {self.child_null.id}')
+        else:
+            print(f'{self.__class__.__name__} id: {self.id} has no null child')
 
-        print(f'{self.__class__.__name__} id: {self.id} has protect children '
-              f'{[f"{child.__class__.__name__} {child.id}" for child in self.o_children_protect.all()]}')
+        if hasattr(self, 'child_protect'):
+            print(f'{self.__class__.__name__} id: {self.id} has protect child '
+                  f'{self.child_protect.__class__.__name__} {self.child_protect.id}')
+        else:
+            print(f'{self.__class__.__name__} id: {self.id} has no protect child')
 
 
 class OneToOneChildCascade(ReportDeleteModel):
-    parent = models.ForeignKey(OneToOneParent,
-                               related_name='o_children_cascade',
-                               on_delete=models.CASCADE)  # Default is CASCADE
+    parent = models.OneToOneField(OneToOneParent,
+                                  related_name='child_cascade',
+                                  on_delete=models.CASCADE)  # Default is CASCADE
 
 
 class OneToOneChildNull(ReportDeleteModel):
-    parent = models.ForeignKey(OneToOneParent,
-                               related_name='o_children_null',
-                               on_delete=models.SET_NULL,
-                               null=True)  # Allows field to be nullable, required for on_delete=SET_NULL
+    parent = models.OneToOneField(OneToOneParent,
+                                  related_name='child_null',
+                                  on_delete=models.SET_NULL,
+                                  null=True)  # Allows field to be nullable, required for on_delete=SET_NULL
 
 
 class OneToOneChildProtect(ReportDeleteModel):
-    parent = models.ForeignKey(OneToOneParent,
-                               related_name='o_children_protect',
-                               on_delete=models.PROTECT)
+    parent = models.OneToOneField(OneToOneParent,
+                                  related_name='child_protect',
+                                  on_delete=models.PROTECT)
